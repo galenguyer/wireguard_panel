@@ -1,6 +1,5 @@
 flask
-
 gunicorn
-
 pylint
 pylint-quotes
+wg_conf

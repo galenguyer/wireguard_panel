@@ -15,3 +15,5 @@ PORT = os.environ.get('PORT', 5000)
 SERVER_NAME = os.environ.get('SERVER_NAME', 'localhost:5000')
 SECRET_KEY = os.environ.get('SESSION_KEY', default=''.join(secrets.token_hex(16)))
 
+DATA_PATH = os.environ.get('DATA_PATH', default='./data')
+WG_CONFIG_PATH = os.environ.get('WG_CONFIG_PATH', default='/etc/wireguard/wg0.conf')

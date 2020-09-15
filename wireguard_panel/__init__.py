@@ -6,7 +6,7 @@ from pathlib import Path
 
 import wg_conf
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, flash
-from flask_login import LoginManager, login_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 from nacl.public import PrivateKey
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -159,4 +159,10 @@ def login_post():
 
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
+    return redirect('/')    return redirect(request.args.get('next') if request.args.get('next') else '/')
+
+@APP.route('/logout')
+@login_required
+def logout():
+    logout_user()
     return redirect('/')

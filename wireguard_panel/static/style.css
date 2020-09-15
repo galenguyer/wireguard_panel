@@ -36,7 +36,6 @@ th, td {
     font-size: 32px;
     line-height: 64px;
     vertical-align: center;
-    background-color: rgba(176, 25, 126, 0.5);
     color: #f2f2f2;
     border: 0px;
     border-radius: 12px;
@@ -44,7 +43,7 @@ th, td {
 
 .top {
     position: fixed;
-    background-color: #b0197e;
+    background-color: #8019b0;
     color: #fff;
     box-shadow: 0 1px 2px rgba(0,0,0,.3);
     right: 0;
@@ -58,7 +57,7 @@ th, td {
 }
 
 a {
-    color: #b0197e;
+    color: #7802af;
     text-decoration: none; 
 }
 

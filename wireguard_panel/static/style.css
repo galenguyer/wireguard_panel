@@ -23,6 +23,7 @@ th, td {
 #peers {
     margin-top: 15px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -30,15 +31,9 @@ th, td {
     margin: 0px 15px;
 }
 
-#newpeerbutton {
-    width: 64px;
-    height: 64px;
-    font-size: 32px;
-    line-height: 64px;
-    vertical-align: center;
-    color: #f2f2f2;
-    border: 0px;
-    border-radius: 12px;
+.break {
+    flex-basis: 100%;
+    height: 0;
 }
 
 .top {

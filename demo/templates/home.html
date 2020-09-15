@@ -41,6 +41,14 @@
             </div>
         {% endfor %}
         </div>
+        {% if edited %}
+        <form action="/save" method="post">
+            <button name="foo" value="Save">Save</button>
+        </form>
+        <form action="/discard" method="post">
+            <button name="foo" value="Discard">Discard</button>
+        </form>
+        {% endif %}
         {% if commit_hash %}
         <div class="git">
             <p>

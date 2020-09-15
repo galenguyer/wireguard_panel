@@ -1,7 +1,7 @@
 body {
     background-color: #eee;
     text-align: center;
-    padding-top: 80px;
+    padding-top: 4rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -36,6 +36,10 @@ th, td {
     height: 0;
 }
 
+.ib {
+    display: inline;
+}
+
 .top {
     position: fixed;
     background-color: #8019b0;
@@ -44,7 +48,14 @@ th, td {
     right: 0;
     left: 0;
     top: 0;
-    padding: .5rem 1rem;
+    padding: 1rem;
+}
+
+.top > h3 {
+    display: inline;
+}
+.top > span {
+    float: right;
 }
 
 .git p {

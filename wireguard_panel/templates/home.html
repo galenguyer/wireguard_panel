@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="top">
-            <h3>Wireguard Control Panel</h3>
+            <h3>Wireguard Control Panel</h3> <span>{{ username }}</span>
         </div>
         <table id="interface">
             <tr>
@@ -52,10 +52,10 @@
         </div>
         </div>
         {% if edited %}
-        <form action="/save" method="post">
+        <form class="ib" action="/save" method="post">
             <button name="foo" value="Save">Save</button>
         </form>
-        <form action="/discard" method="post">
+        <form class="ib" action="/discard" method="post">
             <button name="foo" value="Discard">Discard</button>
         </form>
         {% endif %}

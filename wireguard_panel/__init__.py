@@ -6,6 +6,7 @@ from pathlib import Path
 
 import wg_conf
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for, flash
+from flask_login import LoginManager, login_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 from nacl.public import PrivateKey
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -25,6 +26,15 @@ db = SQLAlchemy(APP)
 APP.logger.info('SQLAlchemy pointed at ' + repr(db.engine.url))
 from .models import *
 db.create_all()
+
+login_manager = LoginManager()
+login_manager.login_view = '/login'
+login_manager.init_app(APP)
+
+@login_manager.user_loader
+def load_user(user_id):
+        # since the user_id is just the primary key of our user table, use it in the query for the user
+        return User.query.get(int(user_id))
 
 _admin_user = User.query.filter_by(username='admin').first()
 if _admin_user:
@@ -52,14 +62,16 @@ def _send_static(path):
     return send_from_directory('static', path)
 
 @APP.route('/')
+@login_required
 def _index():
     WG_CONF.interface['PublicKey'] = b64encode(bytes(PrivateKey(
         b64decode(WG_CONF.interface['PrivateKey'].encode('ascii'))).public_key)).decode('ascii')
     if_name = Path(APP.config['WG_CONFIG_PATH']).stem
     return render_template('home.html', commit_hash=commit_hash, if_name=if_name,
-        interface=WG_CONF.interface, peers=WG_CONF.peers.values(), edited=WC_EDITED)
+        interface=WG_CONF.interface, peers=WG_CONF.peers.values(), edited=WC_EDITED, username=current_user.username)
 
 @APP.route('/newpeer', methods=['GET', 'POST'])
+@login_required
 def _newpeer():
     if request.method == 'GET':
         commit_hash = None
@@ -85,6 +97,7 @@ def _newpeer():
         return redirect('/')
 
 @APP.route('/save', methods=['POST'])
+@login_required
 def _save():
     global WC_EDITED
     WG_CONF.write_file()
@@ -92,6 +105,7 @@ def _save():
     return redirect('/')
 
 @APP.route('/discard', methods=['POST'])
+@login_required
 def _discard():
     global WC_EDITED
     global WG_CONF
@@ -100,6 +114,7 @@ def _discard():
     return redirect('/')
 
 @APP.route('/editpeer', methods=['GET', 'POST'])
+@login_required
 def _editpeer():
     pubkey = urllib.parse.unquote(request.args.get('peer'))
     if request.method == 'GET':
@@ -116,6 +131,7 @@ def _editpeer():
 
 
 @APP.route('/deletepeer', methods=['POST'])
+@login_required
 def _deletepeer():
     pubkey = urllib.parse.unquote(request.args.get('peer'))
     global WC_EDITED
@@ -142,4 +158,5 @@ def login_post():
         return redirect('/login') # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
+    login_user(user, remember=remember)
     return redirect('/')

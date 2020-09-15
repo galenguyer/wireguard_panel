@@ -41,7 +41,7 @@ if _admin_user:
     _admin_user.password = generate_password_hash(APP.config['APP_ADMIN_PASSWORD'], method='sha256')
     db.session.commit()
 else:
-    _admin_user = User(username='admin', password=generate_password_hash(APP.config['APP_ADMIN_PASSWORD'], method='sha256'))
+    _admin_user = User(username='admin', password=generate_password_hash(APP.config['APP_ADMIN_PASSWORD'], method='sha256'), is_admin=True)
     db.session.add(_admin_user)
     db.session.commit()
 

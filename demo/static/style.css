@@ -20,6 +20,16 @@ th, td {
     padding: 10px;
 }
 
+#peers {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.peer {
+    margin: 0px 15px;
+}
+
 .top {
     position: fixed;
     background-color: #b0197e;

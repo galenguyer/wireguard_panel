@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Flask Gunicorn Bootstrap Demo</title>
+        <meta name="theme-color" content="#B0197E">
+        <link rel="stylesheet" href="/static/style.css" media="screen">
+    </head>
+    <body>
+        <div class="top">
+            <h3>New Peer</h3>
+        </div>
+        <form method='POST'>
+            <table>
+                <tr>
+                    <th colspan="2">Peer</th>
+                </tr>
+                <tr>
+                    <td>PrivateKey (optional)</td>
+                    <td>
+                        <input type="text" name="privkey" size="36">
+                    </td>
+                </tr>
+                <tr>
+                    <td>PublicKey (optional)</td>
+                    <td>
+                        <input type="text" name="pubkey" size="36">
+                    </td>
+                </tr>
+                <tr>
+                    <td>AllowedIps</td>
+                    <td>
+                        <input type="text" name="ips" size="36">
+                    </td>
+                </tr>
+                <tr>
+                    <td>PresharedKey (optional)</td>
+                    <td>
+                        <input type="text" name="psk" size="36">
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="Create">
+        </form>
+        <p>About Public and Private Keys: If a private key is provided, the public key will be derived and used, and you will get a QR code to import the 
+            configuration. If a public key is provided, that will be used, but no qr code will be displayed. If none are provided, a key pair will be created for you</p>
+        {% if commit_hash %}
+        <div class="git">
+            <p>
+            <a href="https://github.com/galenguyer/wireguard_panel/tree/{{ commit_hash }}">Check out this project on GitHub ({{ commit_hash }})</a>
+            </p>
+        </div>
+        {% endif %}
+    </body>
+</html>

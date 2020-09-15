@@ -11,16 +11,35 @@
         <div class="top">
             <h3>Hello, World</h3>
         </div>
-        <div id="interface">
-            <h3>{{ if_name }}</h3>
-            <p>PrivKey = {{ interface['PrivateKey'] }}</p>
-            <p>PubKey = {{ interface['PublicKey'] }}</p>
-            <p>Address = {{ interface['Address'] }}</p>
-        </div>
+        <table id="interface">
+            <tr>
+                <th colspan="2">{{ if_name }}</th>
+            </tr>
+            <tr>
+                <td>PrivKey</td>
+                <td>{{ interface['PrivateKey'] }}</td>
+            </tr>
+            <tr>
+                <td>PubKey</td>
+                <td>{{ interface['PublicKey'] }}</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>{{ interface['Address'] }}</td>
+            </tr>
+        </table>
         {% for peer in peers %}
-        <div class="peer">
-            <p>PubKey = {{ peer | string }}</p>
-        </div>
+        <table class="peer">
+            <tr>
+                <th colspan="2">Peer</th>
+            </tr>
+            {% for key, value in peer.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </table>
         {% endfor %}
         {% if commit_hash %}
         <div class="git">

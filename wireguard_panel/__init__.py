@@ -3,6 +3,7 @@
 import os
 import subprocess
 import wg_conf
+import urllib.parse
 from base64 import b64encode, b64decode
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for
 from nacl.public import PrivateKey
@@ -17,6 +18,7 @@ else:
     APP.config.from_pyfile(os.path.join(os.getcwd(), 'config.env.py'))
 
 APP.secret_key = APP.config['SECRET_KEY']
+APP.jinja_env.filters['quote'] = lambda u: urllib.parse.quote(u)
 
 WC_EDITED=False
 wc = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
@@ -43,13 +45,6 @@ def _index():
 def _newpeer():
     if request.method == 'GET':
         commit_hash = None
-        try:
-            commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']) \
-                                    .strip() \
-                                    .decode('utf-8')
-        # pylint: disable=bare-except
-        except:
-            commit_hash = None
         return render_template('newpeer.html', commit_hash=commit_hash)
     elif request.method == 'POST':
         if request.form.get('privkey').strip() != '':
@@ -63,7 +58,7 @@ def _newpeer():
             privkey = b64encode(bytes(tmpkey)).decode("ascii")
             pubkey = b64encode(bytes(tmpkey.public_key)).decode("ascii")
         wc.create_peer(pubkey)
-        wc.add_peer_attr(pubkey, 'AllowedIps', request.form.get('ips'))
+        wc.add_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
         if request.form.get('psk').strip() != '':
             wc.add_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
         global WC_EDITED
@@ -84,3 +79,16 @@ def _discard():
     wc = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
     WC_EDITED = False
     return redirect('/')
+
+@APP.route('/editpeer', methods=['GET', 'POST'])
+def _editpeer():
+    pubkey = urllib.parse.unquote(request.args.get('peer'))
+    if request.method == 'GET':
+        return render_template('editpeer.html', peer=wc.peers[pubkey])
+    elif request.method == 'POST':
+        global WC_EDITED
+        wc.set_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
+        if request.form.get('psk').strip() != '':
+            wc.set_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
+        WC_EDITED = True
+        return redirect('/')

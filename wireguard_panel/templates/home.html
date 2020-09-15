@@ -29,7 +29,7 @@
             <div class="peer">
                 <table>
                     <tr>
-                        <th colspan="2">Peer</th>
+                        <th colspan="2"><a href="editpeer?peer={{ peer['PublicKey'] | string | quote }}">Peer</a></th>
                     </tr>
                     {% for key, value in peer.items() %}
                         <tr>

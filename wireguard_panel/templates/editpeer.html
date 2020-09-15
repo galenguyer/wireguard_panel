@@ -22,18 +22,14 @@
                         {{ peer['PublicKey'] }}
                     </td>
                 </tr>
+                {% for key, value in peer.items() %}
+                {% if key != 'PublicKey' %}
                 <tr>
-                    <td>AllowedIps</td>
-                    <td>
-                        <input type="text" name="ips" size="64" value="{{ peer['AllowedIPs'] }}">
-                    </td>
+                    <td>{{ key }}</td>
+                    <td><input type="text" name="{{ key }}" size="64" value="{{ value }}"></td>
                 </tr>
-                <tr>
-                    <td>PresharedKey (optional)</td>
-                    <td>
-                        <input type="text" name="psk" size="64" value="{{ peer['PresharedKey'] }}">
-                    </td>
-                </tr>
+                {% endif %}
+                {% endfor %}
             </table>
             <input type="submit" value="Save">
         </form>

@@ -121,11 +121,11 @@ def _editpeer():
         return render_template('editpeer.html', peer=WG_CONF.peers[pubkey])
     elif request.method == 'POST':
         global WC_EDITED
-        WG_CONF.set_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
-        if request.form.get('psk').strip() != '':
-            WG_CONF.set_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
-        else:
-            WG_CONF.del_peer_attr(pubkey, 'PresharedKey')
+        for fieldname, value in request.form.items():
+            if value.strip() != '':
+                WG_CONF.set_peer_attr(pubkey, fieldname, value)
+            else:
+                WG_CONF.del_peer_attr(pubkey, fieldname)
         WC_EDITED = True
         return redirect('/')
 

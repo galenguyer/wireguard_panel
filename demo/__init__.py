@@ -6,6 +6,7 @@ import wg_conf
 from base64 import b64encode, b64decode
 from flask import Flask, render_template, send_from_directory
 from nacl.public import PrivateKey
+from pathlib import Path
 
 APP = Flask(__name__)
 
@@ -25,6 +26,7 @@ def _send_static(path):
 def _index():
     wc = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
     wc.interface['PublicKey'] = b64encode(bytes(PrivateKey(b64decode(wc.interface['PrivateKey'].encode('ascii'))).public_key)).decode('ascii')
+    if_name = Path(APP.config['WG_CONFIG_PATH']).stem
     commit_hash = None
     try:
         commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']) \
@@ -33,4 +35,4 @@ def _index():
     # pylint: disable=bare-except
     except:
         commit_hash = None
-    return render_template('home.html', commit_hash=commit_hash, interface=wc.interface)
+    return render_template('home.html', commit_hash=commit_hash, if_name=if_name, interface=wc.interface, peers=wc.peers.values())

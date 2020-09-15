@@ -11,6 +11,17 @@
         <div class="top">
             <h3>Hello, World</h3>
         </div>
+        <div id="interface">
+            <h3>{{ if_name }}</h3>
+            <p>PrivKey = {{ interface['PrivateKey'] }}</p>
+            <p>PubKey = {{ interface['PublicKey'] }}</p>
+            <p>Address = {{ interface['Address'] }}</p>
+        </div>
+        {% for peer in peers %}
+        <div class="peer">
+            <p>PubKey = {{ peer | string }}</p>
+        </div>
+        {% endfor %}
         {% if commit_hash %}
         <div class="git">
             <p>

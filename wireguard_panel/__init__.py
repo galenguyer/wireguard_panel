@@ -92,3 +92,12 @@ def _editpeer():
             wc.set_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
         WC_EDITED = True
         return redirect('/')
+
+
+@APP.route('/deletepeer', methods=['POST'])
+def _deletepeer():
+    pubkey = urllib.parse.unquote(request.args.get('peer'))
+    global WC_EDITED
+    wc.del_peer(pubkey)
+    WC_EDITED = True
+    return redirect('/')

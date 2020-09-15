@@ -90,6 +90,8 @@ def _editpeer():
         wc.set_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
         if request.form.get('psk').strip() != '':
             wc.set_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
+        else:
+            wc.del_peer_attr(pubkey, 'PresharedKey')
         WC_EDITED = True
         return redirect('/')
 

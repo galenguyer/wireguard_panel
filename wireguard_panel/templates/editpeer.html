@@ -40,8 +40,6 @@
         <form method="POST" action="/deletepeer?peer={{ peer['PublicKey'] | quote }}">
             <input type="submit" value="Delete Peer">
         </form>
-        <p>About Public and Private Keys: If a private key is provided, the public key will be derived and used, and you will get a QR code to import the 
-            configuration. If a public key is provided, that will be used, but no qr code will be displayed. If none are provided, a key pair will be created for you</p>
         {% if commit_hash %}
         <div class="git">
             <p>

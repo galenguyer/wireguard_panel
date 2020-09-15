@@ -40,6 +40,15 @@
                 </table>
             </div>
         {% endfor %}
+        <div class="peer">
+            <a href="/newpeer">
+                <table>
+                    <tr>
+                        <th colspan="2">Add Peer</th>
+                    </tr>
+                </table>
+            </a>
+        </div>
         </div>
         {% if edited %}
         <form action="/save" method="post">

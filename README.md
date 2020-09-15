@@ -18,7 +18,7 @@ Locally running this application should be pretty simple.
 2. Install dependencies
   * `pip install -r requirements.txt`
 3. Run the app
-  * `gunicorn demo:APP --bind=localhost:5000`
+  * `gunicorn wireguard_panel:APP --bind=localhost:5000`
 4. Visit localhost:5000 in your web browser.
 
 ## Linting

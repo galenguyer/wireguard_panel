@@ -17,3 +17,6 @@ SECRET_KEY = os.environ.get('SESSION_KEY', default=''.join(secrets.token_hex(16)
 
 DATA_PATH = os.environ.get('DATA_PATH', default='./data')
 WG_CONFIG_PATH = os.environ.get('WG_CONFIG_PATH', default='/etc/wireguard/wg0.conf')
+
+SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI', default='sqlite://./db.sqlite')
+APP_ADMIN_PASSWORD = os.environ.get('APP_ADMIN_PASSWORD', default='tits123')

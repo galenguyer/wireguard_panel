@@ -122,6 +122,8 @@ def _editpeer():
     elif request.method == 'POST':
         global WC_EDITED
         for fieldname, value in request.form.items():
+            if fieldname.strip() == 'ignore':
+                continue
             if value.strip() != '':
                 WG_CONF.set_peer_attr(pubkey, fieldname, value)
             else:

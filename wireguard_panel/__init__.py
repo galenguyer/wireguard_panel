@@ -60,6 +60,9 @@ WG_CONF = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
 @APP.route('/static/<path:path>', methods=['GET'])
 def _send_static(path):
     return send_from_directory('static', path)
+@APP.route('/favicon.ico')
+def _send_favicon():
+    return send_from_directory('static', 'favicon.ico')
 
 @APP.route('/')
 @login_required

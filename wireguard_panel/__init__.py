@@ -2,12 +2,13 @@
 
 import os
 import subprocess
-import wg_conf
 import urllib.parse
 from base64 import b64encode, b64decode
+from pathlib import Path
+
+import wg_conf
 from flask import Flask, render_template, send_from_directory, request, redirect, url_for
 from nacl.public import PrivateKey
-from pathlib import Path
 
 APP = Flask(__name__)
 
@@ -21,7 +22,7 @@ APP.secret_key = APP.config['SECRET_KEY']
 APP.jinja_env.filters['quote'] = lambda u: urllib.parse.quote(u)
 
 WC_EDITED=False
-wc = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
+WG_CONF = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
 
 @APP.route('/static/<path:path>', methods=['GET'])
 def _send_static(path):
@@ -29,7 +30,8 @@ def _send_static(path):
 
 @APP.route('/')
 def _index():
-    wc.interface['PublicKey'] = b64encode(bytes(PrivateKey(b64decode(wc.interface['PrivateKey'].encode('ascii'))).public_key)).decode('ascii')
+    WG_CONF.interface['PublicKey'] = b64encode(bytes(PrivateKey(
+        b64decode(WG_CONF.interface['PrivateKey'].encode('ascii'))).public_key)).decode('ascii')
     if_name = Path(APP.config['WG_CONFIG_PATH']).stem
     commit_hash = None
     try:
@@ -39,7 +41,8 @@ def _index():
     # pylint: disable=bare-except
     except:
         commit_hash = None
-    return render_template('home.html', commit_hash=commit_hash, if_name=if_name, interface=wc.interface, peers=wc.peers.values(), edited=WC_EDITED)
+    return render_template('home.html', commit_hash=commit_hash, if_name=if_name,
+        interface=WG_CONF.interface, peers=WG_CONF.peers.values(), edited=WC_EDITED)
 
 @APP.route('/newpeer', methods=['GET', 'POST'])
 def _newpeer():
@@ -49,18 +52,19 @@ def _newpeer():
     elif request.method == 'POST':
         if request.form.get('privkey').strip() != '':
             privkey = request.form.get('privkey')
-            pubkey = b64encode(bytes(PrivateKey(b64decode(privkey.encode('ascii'))).public_key)).decode('ascii')
+            pubkey = b64encode(bytes(
+                PrivateKey(b64decode(privkey.encode('ascii'))).public_key)).decode('ascii')
         elif request.form.get('pubkey').strip() != '':
             privkey = None
             pubkey = request.form.get('pubkey')
         else:
             tmpkey = PrivateKey.generate()
-            privkey = b64encode(bytes(tmpkey)).decode("ascii")
-            pubkey = b64encode(bytes(tmpkey.public_key)).decode("ascii")
-        wc.create_peer(pubkey)
-        wc.add_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
+            privkey = b64encode(bytes(tmpkey)).decode('ascii')
+            pubkey = b64encode(bytes(tmpkey.public_key)).decode('ascii')
+        WG_CONF.create_peer(pubkey)
+        WG_CONF.add_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
         if request.form.get('psk').strip() != '':
-            wc.add_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
+            WG_CONF.add_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
         global WC_EDITED
         WC_EDITED = True
         return redirect('/')
@@ -68,15 +72,15 @@ def _newpeer():
 @APP.route('/save', methods=['POST'])
 def _save():
     global WC_EDITED
-    wc.write_file()
+    WG_CONF.write_file()
     WC_EDITED = False
     return redirect('/')
 
 @APP.route('/discard', methods=['POST'])
 def _discard():
     global WC_EDITED
-    global wc
-    wc = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
+    global WG_CONF
+    WG_CONF = wg_conf.WireguardConfig(APP.config['WG_CONFIG_PATH'])
     WC_EDITED = False
     return redirect('/')
 
@@ -84,14 +88,14 @@ def _discard():
 def _editpeer():
     pubkey = urllib.parse.unquote(request.args.get('peer'))
     if request.method == 'GET':
-        return render_template('editpeer.html', peer=wc.peers[pubkey])
+        return render_template('editpeer.html', peer=WG_CONF.peers[pubkey])
     elif request.method == 'POST':
         global WC_EDITED
-        wc.set_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
+        WG_CONF.set_peer_attr(pubkey, 'AllowedIPs', request.form.get('ips'))
         if request.form.get('psk').strip() != '':
-            wc.set_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
+            WG_CONF.set_peer_attr(pubkey, 'PresharedKey', request.form.get('psk'))
         else:
-            wc.del_peer_attr(pubkey, 'PresharedKey')
+            WG_CONF.del_peer_attr(pubkey, 'PresharedKey')
         WC_EDITED = True
         return redirect('/')
 
@@ -100,6 +104,6 @@ def _editpeer():
 def _deletepeer():
     pubkey = urllib.parse.unquote(request.args.get('peer'))
     global WC_EDITED
-    wc.del_peer(pubkey)
+    WG_CONF.del_peer(pubkey)
     WC_EDITED = True
     return redirect('/')

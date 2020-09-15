@@ -19,4 +19,5 @@ DATA_PATH = os.environ.get('DATA_PATH', default='./data')
 WG_CONFIG_PATH = os.environ.get('WG_CONFIG_PATH', default='/etc/wireguard/wg0.conf')
 
 SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI', default='sqlite://./db.sqlite')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 APP_ADMIN_PASSWORD = os.environ.get('APP_ADMIN_PASSWORD', default='tits123')
